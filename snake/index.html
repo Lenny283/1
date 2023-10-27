@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="snake .css">        
+    <script src="snake.js"></script>
+</head>
+<body>
+    <h1 id="Score">Score: 0</h1>
+<canvas id="canvas" width = "480" height="480"></canvas>  
+<form action="">
+    <label for="schwierigkeitsgrad">wähle den schwierigkeitsgrad:</label>
+    <select name="schwierigkeitsgrad" id="schwierigkeitsgrad">
+      <option value="Easy">Easy</option>
+      <option value="Middel">Middel</option>
+      <option value="Hard">Hard</option>
+    </select>
+    <br><br>
+    <a href="">Github</a>
+</form>
+<script>                                    
+
+let canvas = document.getElementById ('canvas');    //Sucht den Canvas in Html(Nach der ID)
+let ctx = canvas.getContext('2d');
+let Score = document.getElementById ('Score');      // Sucht den Score in Html (Nach der ID)
+let rows = 20;              //Anzahl der Reihen
+let cols = 20;              //Anzahl der Spalten    
+let snake = [{ 
+    x:2,                            //Start Punkt der Snake (Blaues Quadrat)
+    y:9
+}]                                                                  // Notiz 58.30
+let food;                                                                                      
+let cellWidth = canvas.width / cols;
+let cellHeight = canvas.height /rows;                   //variablen
+let direction = 'RIGHT';      // Start Richtung
+let foodCollected = false;
+
+
+placeFood();   //plaziert den Apfel(Rottes Quadrat)
+
+ setInterval(gameLoop,100);         //Neu ladezeit des Canvases in Millie Sekunden (Schnelligkeit der Snake Weiser punkt)
+document.addEventListener('keydown',keyDown);
+
+
+draw();   // Zeichnet das Unten angegebene (Canvas)
+
+    function draw (){
+        ctx.fillStyle = 'green';                             //Farbe des Canvases
+            ctx.fillRect(0, 0, canvas.width, canvas.height);    
+            ctx.fillStyle = 'blue';                          //Farbe der Snake
+ 
+ snake.forEach(part => add(part.x,part.y));
+
+
+
+   ctx.fillStyle = 'red';
+   add(food.x,food.y);                      //sachen Für den Apfel (Food)                         
+   requestAnimationFrame(draw);
+    }
+
+    function testGameOver() {
+
+       let firsPart = snake[0];
+       let otherParts = snake.slice(1);
+      let duplicatePart = otherParts.find (part => part.x == firsPart.x && part.y == firsPart.y);
+        
+    // 1. Schlange läuft gegen die Wand
+ if (snake [0].x < 0  || 
+     snake [0].x > cols - 1 ||                          //wenn die Schlange gegen die Wand läuft
+     snake [0].y < 0 ||
+     snake [0].y > rows - 1|| 
+     duplicatePart
+ ){
+    placeFood();
+    snake = [{ 
+    x:2,                    
+    y:9                                                 //Starte das Spiel neu
+}]    
+direction = 'RIGHT';
+ }
+}
+
+ 
+                                 
+
+function placeFood(){
+    let randomX = Math.floor(Math.random()* cols);
+    let randomY = Math.floor(Math.random()* rows);       //random Zahl Zwischen 1-19 (pixel im Canvas)
+    food =
+     {x: randomX,
+      y: randomY
+        
+}
+}
+
+function add(x,y){
+    ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth -1, cellHeight -1);
+
+}
+function ShiftSnake(){
+                                            //länge der schlanger wird beschriben
+         for (let i = snake.length -1; i > 0; i--) {
+            const part = snake[i];
+            const lastPart = snake [i -1];
+            part.x = lastPart.x;
+            part.y = lastPart.y;    
+         }   
+        }
+   
+        function gameLoop() {
+        testGameOver();
+        if (foodCollected) {    //wenn der apfel(roter Punkt) eingesammelt wird
+            snake = [{
+                x: snake[0].x,              //verlängerer die Schlange 
+                y: snake[0].y}   
+            , ...snake];
+            foodCollected = false;// Beendet das Verlängern der Schlange
+            placeFood();
+        }
+        ShiftSnake();
+        if(direction =='LEFT'){
+            snake[0].x--;   
+        } 
+
+        if(direction =='RIGHT'){
+            snake[0].x++;
+        }
+                                                // Widerholtes Bewegen der Snake 
+        if(direction =='UP'){
+            snake[0].y--;
+        }
+
+        if(direction =='DOWN'){
+            snake[0].y++;
+        }
+        if(snake[0].x == food.x &&
+           snake[0].y == food.y ){ 
+            foodCollected = true;         
+            if (foodCollected) {
+                                        //Hier Platz für  ein Score board
+            }
+
+    
+    }
+}
+
+   
+
+function keyDown(e){
+    if(e.keyCode == 65){        //a Taste Drücken um die Schlange nach links Zu bewegen
+        direction = 'LEFT';
+    }
+    if(e.keyCode == 87){        //w Taste Drücken um die Schlange nach Oben Zu bewegen
+        direction = 'UP';
+                            
+    } if(e.keyCode == 68){
+        direction = 'RIGHT';    //d Taste Drücken um die Schlange nach Rechts Zu bewegen
+    }                                      
+    if(e.keyCode == 83){
+        direction = 'DOWN';     //s Taste Drücken um die Schlange nach Unten Zu bewegen
+    }
+
+}
+</script>
+</body>
+</html>
